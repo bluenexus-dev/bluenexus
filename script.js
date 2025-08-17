@@ -1,22 +1,51 @@
-// Function to handle the fade-in effect on scroll for multiple animations
-function handleScrollAnimation() {
-    const elements = document.querySelectorAll('.fade-in, .fade-in-up');
-    elements.forEach(el => {
-        if (el.classList.contains('is-visible')) {
-            return;
-        }
-        const rect = el.getBoundingClientRect();
-        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-        // Element is visible if its top is in the viewport, or its bottom is in the viewport
-        if (rect.top <= viewportHeight * 0.85 && rect.bottom >= 0) {
-            el.classList.add('is-visible');
-        }
-    });
-}
+// Checklist items
+const items = [
+  "Bite the hand that feeds me.",
+  "Throw rocks from my glass house.",
+  "Spill milk and cry about it.",
+  "Play with fire.",
+  "Reap what I sowed.",
+  "Put all my eggs in one basket.",
+  "Make my bed and lie in it.",
+  "Count my chickens before they hatch.",
+  "Burn bridges I might need later.",
+  "Judge a book by its cover.",
+  "Bite off more than I can chew.",
+  "Wake the sleeping dogs.",
+  "Cross that bridge long before I get to it.",
+  "Beat the dead horse (again).",
+  "Shoot the messenger.",
+  "Look a gift horse in the mouth.",
+  "Put off today what I could do tomorrow.",
+  "Throw the baby out with the bathwater.",
+  "Miss the forest for the trees.",
+  "Reinvent the wheel.",
+  "Shoot myself in the foot.",
+  "Open Pandora’s box.",
+  "Dig my own grave.",
+  "Kick the hornet’s nest.",
+  "Cut off my nose to spite my face.",
+  "Cry wolf.",
+  "Cross the Rubicorn."
+];
 
-// Attach scroll event listener
-window.addEventListener('scroll', handleScrollAnimation);
-window.addEventListener('load', () => {
-    // Run on page load to check initial positions
-    handleScrollAnimation();
+const checklist = document.getElementById("checklist");
+
+items.forEach(text => {
+  const li = document.createElement("li");
+
+  const span = document.createElement("span");
+  span.textContent = text;
+
+  const icon = document.createElement("div");
+  icon.className = "check-icon";
+
+  li.appendChild(span);
+  li.appendChild(icon);
+
+  li.addEventListener("click", () => {
+    li.classList.toggle("checked");
+  });
+
+  checklist.appendChild(li);
 });

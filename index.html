@@ -1,19 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checklist</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Door Alarm Remote</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0f1724; --accent:#7c3aed; --muted:#9aa6b2; --white:#eef2ff; font-family:'Poppins',sans-serif; }
+  body{margin:0;background:linear-gradient(180deg,#071025,#071833);color:var(--white);}
+  .wrap{max-width:520px;margin:36px auto;padding:20px;}
+  .card{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px;box-shadow:0 6px 30px rgba(2,6,23,0.6);}
+  h1{margin:0 0 8px;font-weight:700;}
+  p{margin:0 0 10px;color:var(--muted);}
+  .status{display:flex;gap:10px;align-items:center;margin-top:12px;}
+  .dot{width:12px;height:12px;border-radius:50%;}
+  .dot.on{background:var(--accent);} .dot.off{background:#6b7280;}
+  .big{margin-top:18px;font-size:22px;font-weight:700;}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+  button{flex:1;padding:12px;border-radius:10px;font-weight:600;border:none;cursor:pointer;}
+  button.primary{background:linear-gradient(90deg,#7c3aed,#4f46e5);color:white;}
+  button.warn{background:linear-gradient(90deg,#ef4444,#f97316);color:white;}
+  button.secondary{background:#1e293b;color:white;}
+  .countdown{margin-top:10px;font-size:14px;color:var(--muted);}
+  .log{margin-top:14px;font-size:13px;max-height:120px;overflow:auto;background:rgba(0,0,0,0.2);padding:10px;border-radius:8px;}
+  select{margin-top:10px;padding:8px;border-radius:8px;background:#1e293b;color:white;border:none;}
+</style>
 </head>
 <body>
+<div class="wrap">
   <div class="card">
-    <h1>Checklist</h1>
-    <div class="list-container">
-      <ul id="checklist"></ul>
+    <h1>Door Alarm Remote</h1>
+    <p>Connect to your Micro:bit and control the alarm.</p>
+    <div class="status"><div id="dot" class="dot off"></div><div id="statusText">Disconnected</div></div>
+    <div class="big" id="alarmState">Idle 😊</div>
+    <div class="controls">
+      <button id="connectBtn" class="secondary">Connect</button>
+      <button id="disableBtn" class="warn">Disable</button>
+      <button id="enableBtn" class="primary">Enable</button>
+      <button id="snoozeBtn" class="secondary">Snooze 15s</button>
     </div>
+    <select id="rearmSelect">
+      <option value="10000">Re-arm after 10s</option>
+      <option value="30000" selected>Re-arm after 30s</option>
+      <option value="60000">Re-arm after 1m</option>
+      <option value="300000">Re-arm after 5m</option>
+      <option value="NEVER">Never re-arm</option>
+    </select>
+    <div class="countdown" id="countdown"></div>
+    <div class="log" id="log"><strong>Log:</strong></div>
   </div>
-  <script src="script.js"></script>
+</div>
+<script>
+const UART_SERVICE='6e400001-b5a3-f393-e0a9-e50e24dcca9e'
+const UART_TX='6e400003-b5a3-f393-e0a9-e50e24dcca9e'
+const UART_RX='6e400002-b5a3-f393-e0a9-e50e24dcca9e'
+let device,server,tx,rx
+let decoder=new TextDecoder(),encoder=new TextEncoder()
+let snoozeUntil=0
+let rearmTimer=null
+const $=id=>document.getElementById(id)
+function log(msg){$("log").innerHTML+="<div>"+new Date().toLocaleTimeString()+" - "+msg+"</div>";$("log").scrollTop=$("log").scrollHeight}
+function setStatus(c,t){$("dot").className="dot "+(c?"on":"off");$("statusText").textContent=t}
+function updateState(txt,emoji){$("alarmState").textContent=txt+" "+emoji}
+async function connect(){
+ try{
+  device=await navigator.bluetooth.requestDevice({filters:[{namePrefix:"BBC micro:bit"}],optionalServices:[UART_SERVICE]})
+  server=await device.gatt.connect();setStatus(true,"Connected")
+  const svc=await server.getPrimaryService(UART_SERVICE)
+  tx=await svc.getCharacteristic(UART_TX)
+  rx=await svc.getCharacteristic(UART_RX)
+  await tx.startNotifications()
+  tx.addEventListener("characteristicvaluechanged",e=>{
+    const parts=decoder.decode(e.target.value).split("\n").map(s=>s.trim()).filter(Boolean)
+    parts.forEach(processMsg)
+  })
+  log("Connected.")
+ }catch(e){log("Error: "+e)}
+}
+function disconnect(){if(device&&device.gatt.connected){device.gatt.disconnect();setStatus(false,"Disconnected");updateState("Idle","😊")}}
+async function sendLine(s){if(!rx)return;await rx.writeValue(encoder.encode(s+"\n"));log("TX: "+s)}
+function processMsg(msg){
+ log("RX: "+msg)
+ if(msg=="ALARM"){
+   if(Date.now()<snoozeUntil)return
+   updateState("ALARM!","⚠️")
+   if(navigator.vibrate)navigator.vibrate([200,100,200])
+   beep()
+ }else if(msg=="DISABLED_ACK"){updateState("Disabled","🎯");startRearmCountdown()}
+ else if(msg=="ENABLED_ACK"){updateState("Enabled","🔓");clearRearmCountdown()}
+ else if(msg.startsWith("REARM_SET:")){log("Re-arm set to "+msg.split(":")[1])}
+}
+function beep(){try{const ctx=new(window.AudioContext||window.webkitAudioContext)(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=880;g.gain.value=0.05;o.start();setTimeout(()=>{o.stop();ctx.close()},200)}catch(e){}}
+function startRearmCountdown(){
+ let val=$("rearmSelect").value
+ if(val=="NEVER"){ $("countdown").textContent="Will not auto re-arm"; return }
+ let end=Date.now()+parseInt(val)
+ rearmTimer=setInterval(()=>{let left=Math.max(0,Math.ceil((end-Date.now())/1000));$("countdown").textContent="Auto re-enables in "+left+"s";if(left<=0){clearInterval(rearmTimer);$("countdown").textContent=""}},1000)
+}
+function clearRearmCountdown(){if(rearmTimer)clearInterval(rearmTimer);$("countdown").textContent=""}
+$("connectBtn").onclick=()=>{if(device&&device.gatt.connected)disconnect();else connect()}
+$("disableBtn").onclick=()=>sendLine("DISABLE")
+$("enableBtn").onclick=()=>sendLine("ENABLE")
+$("snoozeBtn").onclick=()=>{snoozeUntil=Date.now()+15000;log("Snoozed for 15s");updateState("Snoozed","😴")}
+$("rearmSelect").onchange=()=>{sendLine("SET_REARM:"+$("rearmSelect").value)}
+</script>
 </body>
 </html>

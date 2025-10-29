@@ -1,0 +1,474 @@
+:root {
+    /* Main colours */
+    --main-bg: #2c2c2c;
+    --side-bg: #3a3a3a;
+    --header-bg: #141414;
+    --footer-bg: #141414;
+    --text-color: #ffffff;
+
+    /* Tiles */
+    --tile-gap: 1rem;
+    --tile-height: 240px;
+    --tile-width: 360px;
+
+    /* Logo */
+    --logo-height: 180px;
+
+    /* Playground banner */
+    --playground-color: #A30391;
+    --playground-icon-color: #141414;
+    --playground-text-color: #141414;
+
+    /* Subdomain colours */
+    --knowledge-color: #4A90E2;
+    --tools-color: #F5A623;
+    --picker-color: #50E3C2;
+    --design-color: #B8E986;
+    --play-color: #9013FE;
+
+    /* Status toggle */
+    --status-on: #28c76f;
+    --status-off: #ff4d4d;
+
+    /* NaviBot colours */
+    --navibot-bg: var(--main-bg);
+    --navibot-hover: #141414;
+    --navibot-accent: #00C896;
+}
+
+/* Body */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--side-bg);
+    color: var(--text-color);
+}
+
+/* Main content wrapper */
+.main-content {
+    width: 60%;
+    margin: 0 auto;
+    background-color: var(--main-bg);
+    padding: 2rem 0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* Header */
+header.main-header {
+    background-color: var(--header-bg);
+    height: 220px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* Logo */
+.header-logo {
+    height: var(--logo-height);
+    width: auto;
+    position: absolute;
+    left: 20%;
+}
+
+/* Tiles grid */
+.tiles-section {
+    display: grid;
+    grid-template-columns: repeat(2, var(--tile-width));
+    gap: var(--tile-gap);
+    justify-content: center;
+    margin: 2rem auto;
+}
+
+/* Tile style */
+.tile {
+    width: var(--tile-width);
+    height: var(--tile-height);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.35);
+}
+
+/* Status indicator on tiles */
+.status-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--status-off);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 6px rgba(0,0,0,0.4);
+    display: none; /* hidden initially - toggle controls visibility */
+}
+
+/* Center play tile */
+.play-tile-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem auto;
+}
+
+/* Footer */
+footer.main-footer {
+    background-color: var(--footer-bg);
+    text-align: center;
+    padding: 2rem 0;
+}
+
+/* Playground banner */
+#playground-banner {
+    position: fixed;
+    left: -120px;
+    top: 40%;
+    height: 60px;
+    background-color: var(--playground-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0 10px 10px 0;
+    font-weight: bold;
+    text-decoration: none;
+    transition: left 0.4s ease;
+    padding: 0 10px;
+    width: 150px;
+    z-index: 1000;
+}
+
+#playground-banner:hover {
+    left: 0;
+    width: 180px;
+}
+
+#playground-banner img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    display: inline;
+}
+
+#playground-banner span {
+    display: inline;
+    color: var(--playground-text-color);
+}
+
+/* Status toggle container - fully visible in header */
+.status-toggle {
+    position: absolute;
+    top: 24px;          
+    right: 48px;        
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+/* Hidden checkbox */
+.status-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Slider switch */
+.slider {
+    width: 50px;
+    height: 28px;
+    background-color: var(--status-off);
+    border-radius: 14px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #fff;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s ease;
+}
+
+/* Active state */
+.status-toggle input:checked + .slider {
+    background-color: var(--status-on);
+}
+
+.status-toggle input:checked + .slider::before {
+    transform: translateX(22px);
+}
+
+/* Tooltip below the toggle */
+.status-toggle .tooltip {
+    position: absolute;
+    top: 120%; /* below the toggle */
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    background: #222;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+.status-toggle:hover .tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-6px);
+}
+
+/* Ensure tiles can position status indicators */
+.tile {
+    position: relative;
+}
+
+/* Active/Inactive indicators */
+.tile.active .status-indicator {
+    background-color: var(--status-on);
+}
+
+.tile.inactive .status-indicator {
+    background-color: var(--status-off);
+}
+
+/* ================= NAVIBOT STYLING ================= */
+#navibot-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--navibot-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.12s ease;
+    z-index: 2500;
+    border: none;
+    padding: 0;
+    overflow: hidden;
+}
+
+#navibot-button:hover {
+    background-color: var(--navibot-hover);
+    transform: scale(1.06);
+}
+
+#navibot-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 50%;
+}
+
+/* Chat window */
+#navibot-chat-window {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 340px;
+    height: 380px;
+    background-color: var(--main-bg);
+    border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 2600;
+}
+
+/* TITLE BAR VISIBLE */
+#navibot-title {
+    background-color: var(--navibot-accent);
+    color: #141414;
+    text-align: center;
+    padding: 12px;
+    font-weight: 600;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* visible when open */
+#navibot-chat-window.open {
+    display: flex;
+}
+
+/* Messages container */
+#navibot-messages {
+    padding: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: calc(100% - 64px);
+}
+
+/* Scrollbar */
+#navibot-messages::-webkit-scrollbar {
+    width: 8px;
+}
+#navibot-messages::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+}
+#navibot-messages::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+}
+#navibot-messages {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.06) rgba(255,255,255,0.02);
+}
+
+.bot-message {
+    background-color: var(--navibot-accent);
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 8px;
+    max-width: 78%;
+    align-self: flex-start;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    word-wrap: break-word;
+}
+
+.bot-message a {
+    color: #141414;
+    text-decoration: underline;
+}
+
+.user-message {
+    background-color: rgba(255,255,255,0.06);
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 8px;
+    max-width: 78%;
+    align-self: flex-end;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    word-wrap: break-word;
+}
+
+.navibot-meta {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+}
+
+/* Input area */
+#navibot-input-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px;
+    background: rgba(0,0,0,0.08);
+    border-top: 1px solid rgba(255,255,255,0.03);
+}
+
+#navibot-input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02);
+    color: #fff;
+    outline: none;
+    font-size: 14px;
+}
+
+#navibot-input::placeholder {
+    color: rgba(255,255,255,0.45);
+}
+
+#navibot-send {
+    padding: 8px 12px;
+    background-color: var(--navibot-accent);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Typing indicator */
+.typing {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    max-width: 60%;
+    align-self: flex-start;
+}
+
+.typing .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    opacity: 0.85;
+    transform: translateY(0);
+    animation: bounce 1s infinite;
+}
+
+.typing .dot:nth-child(1) { animation-delay: 0s; }
+.typing .dot:nth-child(2) { animation-delay: 0.12s; }
+.typing .dot:nth-child(3) { animation-delay: 0.24s; }
+
+@keyframes bounce {
+    0% { transform: translateY(0); opacity: 0.6; }
+    40% { transform: translateY(-6px); opacity: 1; }
+    80% { transform: translateY(0); opacity: 0.6; }
+    100% { transform: translateY(0); opacity: 0.6; }
+}
+
+#navibot-messages .bot-message, 
+#navibot-messages .user-message {
+    line-height: 1.2;
+}
+
+@media (max-width: 600px) {
+    #navibot-chat-window { right: 12px; left: 12px; width: auto; }
+    .tiles-section { grid-template-columns: 1fr; justify-items: center; }
+}
+/* === NaviBot Subdomain Accent Colours === */
+a.link-knowledge { color: #F5A623; }
+a.link-tools { color: #50E3C2; }
+a.link-picker { color: #B8E986; }
+a.link-design { color: #D0021B; }
+a.link-play { color: #9013FE; }
+a.link-coding { color: #188038; }
+a.link-playground { color: #A30391; }
+
+/* Hover effect for clarity */
+#navibot-messages a:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+

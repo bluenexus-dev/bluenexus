@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blue Nexus</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/favicons/favicon.main.png" type="image/png">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <img src="images/logos/logo.main.png" alt="Blue Nexus Logo" class="header-logo">
+  </header>
+
+  <!-- Status Toggle -->
+  <label class="status-toggle" id="statusToggleWrapper">
+    <input type="checkbox" id="statusToggle">
+    <span class="slider"></span>
+    <div class="tooltip">Toggle status</div>
+  </label>
+
+  <!-- Tiles Section -->
+  <main class="main-content">
+    <section class="tiles-section">
+      <a href="https://knowledge.bluenexus.dev" class="tile" data-site="knowledge">
+        <img src="images/tiles/tile.knowledge.png" alt="Knowledge Tile">
+        <div class="status-indicator"></div>
+      </a>
+      <a href="https://tools.bluenexus.dev" class="tile" data-site="tools">
+        <img src="images/tiles/tile.tools.png" alt="Tools Tile">
+        <div class="status-indicator"></div>
+      </a>
+      <a href="https://coding.bluenexus.dev" class="tile" data-site="coding">
+        <img src="images/tiles/tile.coding.png" alt="Coding Tile">
+        <div class="status-indicator"></div>
+      </a>
+      <a href="https://play.bluenexus.dev" class="tile" data-site="play">
+        <img src="images/tiles/tile.play.png" alt="Play Tile">
+        <div class="status-indicator"></div>
+      </a>
+      <a href="https://picker.bluenexus.dev" class="tile" data-site="picker">
+        <img src="images/tiles/tile.picker.png" alt="Picker Tile">
+        <div class="status-indicator"></div>
+      </a>
+      <a href="https://design.bluenexus.dev" class="tile" data-site="design">
+        <img src="images/tiles/tile.design.png" alt="Design Tile">
+        <div class="status-indicator"></div>
+      </a>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <p>© 2025 Blue Nexus. All rights reserved.</p>
+  </footer>
+
+  <!-- Playground Banner -->
+  <a href="https://playground.bluenexus.dev" id="playground-banner">
+    <span>Playground</span>
+    <img src="images/misc/flask.png" alt="Flask Icon">
+  </a>
+
+  <!-- NaviBot -->
+  <div id="navibot-button">
+    <img src="images/logos/nblogo.png" alt="NaviBot">
+  </div>
+
+  <div id="navibot-chat-window">
+    <div id="navibot-title">NaviBot</div>
+    <div id="navibot-messages"></div>
+    <div id="navibot-input-container">
+      <input type="text" id="navibot-input" placeholder="Type your message...">
+      <button id="navibot-send">Send</button>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     tools: "https://tools.bluenexus.dev",
     picker: "https://picker.bluenexus.dev",
     design: "https://design.bluenexus.dev",
-    play: "https://play.bluenexus.dev"
+    play: "https://play.bluenexus.dev",
+    gift: "https://gift.bluenexus.dev",
+    legal: "https://legal.bluenexus.dev"
   };
 
   // 🔍 Updated Keywords
@@ -64,6 +66,20 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
     },
     {
+      title: "Gift",
+      url: subdomains.play,
+      keywords: [
+        "bn", "gift", "present", "account"
+      ]
+    },
+    {
+      title: "Legal",
+      url: subdomains.play,
+      keywords: [
+        "bn", "legal", "law", "document", "customise", "send"
+      ]
+    },
+    {
       title: "Enigma",
       url: "https://enigma.bluenexus.dev",
       keywords: [
@@ -79,7 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
     design: "#D0021B",
     play: "#9013FE",
     picker: "#B8E986",
-    tools: "#50E3C2"
+    tools: "#50E3C2",
+    gift: "#FF4F81",
+    legal: "#7A6A00",
   };
 
   // 🟢 Ping subdomains
